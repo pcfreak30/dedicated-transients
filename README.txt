@@ -3,7 +3,7 @@ Contributors: pcfreak30
 Donate link: https://www.paypal.me/pcfreak30
 Tags: optimize, transient, transients
 Requires at least: 3.7
-Tested up to: 4.7
+Tested up to: 4.8.1
 Stable tag: trunk
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
