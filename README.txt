@@ -26,6 +26,10 @@ This section describes how to install the plugin and get it working.
 
 == Changelog ==
 
+### 0.1.2 ###
+
+*Bug: Need to use get_blog_prefix method in MU plugin file
+
 ### 0.1.1 ###
 
 *Bug: Create transients table for all blogs on activation if multisite
