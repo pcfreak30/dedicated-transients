@@ -26,6 +26,12 @@ This section describes how to install the plugin and get it working.
 
 == Changelog ==
 
+### 0.1.1 ###
+
+*Bug: Create transients table for all blogs on activation if multisite
+*Enhancement: Create transients table for any new blog added on multisite
+*Enhancement: Ensure transients table is deleted if blog is deleted on multisite
+
 ### 0.1.0 ###
 
 * Initial version
