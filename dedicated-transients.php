@@ -110,16 +110,11 @@ function dedicated_transients_install_tables() {
 	 * Copied schema from ./wp-admin/includes/schema.php
 	 */
 	global $wpdb;
-	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 	$charset_collate = $wpdb->get_charset_collate();
-	dbDelta( "CREATE TABLE {$wpdb->base_prefix}" . DEDICATED_TRANSIENTS_TABLE . " (
-  option_id bigint(20) unsigned NOT NULL auto_increment,
-  option_name varchar(191) NOT NULL default '',
-  option_value longtext NOT NULL,
-  autoload varchar(20) NOT NULL default 'yes',
-  PRIMARY KEY  (option_id),
-  UNIQUE KEY option_name (option_name)
-) $charset_collate;" );
+	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+	if ( ! is_multisite() ) {
+		dedicated_transients_install_tables_single_site();
+	}
 	if ( is_multisite() ) {
 		$max_index_length = 191;
 		dbDelta( "CREATE TABLE {$wpdb->base_prefix}" . DEDICATED_TRANSIENTS_WPMU_TABLE . " (
@@ -131,5 +126,54 @@ function dedicated_transients_install_tables() {
   KEY meta_key (meta_key($max_index_length)),
   KEY site_id (site_id)
 ) $charset_collate;" );
+
+		foreach ( get_sites( array( 'fields' => 'ids' ) ) as $blog_id ) {
+			switch_to_blog( $blog_id );
+			dedicated_transients_install_tables_single_site();
+			restore_current_blog();
+		}
 	}
+}
+
+/**
+ *
+ */
+function dedicated_transients_install_tables_single_site() {
+	global $wpdb;
+	$charset_collate = $wpdb->get_charset_collate();
+	dbDelta( "CREATE TABLE {$wpdb->get_blog_prefix()}" . DEDICATED_TRANSIENTS_TABLE . " (
+  option_id bigint(20) unsigned NOT NULL auto_increment,
+  option_name varchar(191) NOT NULL default '',
+  option_value longtext NOT NULL,
+  autoload varchar(20) NOT NULL default 'yes',
+  PRIMARY KEY  (option_id),
+  UNIQUE KEY option_name (option_name)
+) $charset_collate;" );
+}
+
+/**
+ * @param $blog_id
+ */
+function dedicated_transients_install_tables_new_blog( $blog_id ) {
+	switch_to_blog( $blog_id );
+	dedicated_transients_install_tables_single_site();
+	restore_current_blog();
+}
+
+/**
+ * @param $tables
+ * @param $blog_id
+ *
+ * @return array
+ */
+function dedicated_transients_mu_table( $tables, $blog_id ) {
+	global $wpdb;
+	$tables[] = $wpdb->get_blog_prefix( $blog_id ) . DEDICATED_TRANSIENTS_TABLE;
+
+	return $tables;
+}
+
+if ( is_multisite() ) {
+	add_action( 'wpmu_new_blog', 'dedicated_transients_install_tables_new_blog' );
+	add_filter( 'wpmu_drop_tables', 'dedicated_transients_mu_table', 10, 2 );
 }
