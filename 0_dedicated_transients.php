@@ -29,7 +29,7 @@ function dedicated_transients_process_query( $query ) {
 			) as $search
 		) {
 			if ( false !== strpos( $query, $search ) ) {
-				$query = str_replace( $wpdb->options, $wpdb->base_prefix . DEDICATED_TRANSIENTS_TABLE, $query );
+				$query = str_replace( $wpdb->options, $wpdb->get_blog_prefix() . DEDICATED_TRANSIENTS_TABLE, $query );
 				break;
 			}
 		}
