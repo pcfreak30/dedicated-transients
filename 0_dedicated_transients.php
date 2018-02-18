@@ -1,18 +1,16 @@
 <?php
 $di_plugin_constants = WP_PLUGIN_DIR . '/dedicated-transients/constants.php';
 
-/** @var \WP_Filesystem_Base $wp_filesystem */
-global $wp_filesystem;
-if ( is_null( $wp_filesystem ) ) {
-	require_once ABSPATH . '/wp-admin/includes/file.php';
-	WP_Filesystem();
+if ( is_file( $di_plugin_constants ) ) {
+	include_once $di_plugin_constants;
 }
 
-if ( ! $wp_filesystem->is_file( $di_plugin_constants ) ) {
+if ( ! defined( 'DEDICATED_TRANSIENTS_WPMU_DROPIN' ) ||
+     ! defined( 'DEDICATED_TRANSIENTS_TABLE' ) ||
+     ! defined( 'DEDICATED_TRANSIENTS_WPMU_TABLE' ) ) {
+
 	return;
 }
-
-require_once $di_plugin_constants;
 
 /**
  * @param string $query
