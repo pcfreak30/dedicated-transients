@@ -92,11 +92,11 @@ function dedicated_transients_object_cache_error() {
  * @return \WP_Filesystem_Base
  */
 function dedicated_transients_wp_filesystem() {
-	/** @var \WP_Filesystem_Base $wp_filesystem */
-	global $wp_filesystem;
-	if ( is_null( $wp_filesystem ) ) {
+	/** @var \WP_Filesystem_Direct $wp_filesystem */
+	static $wp_filesystem = null;
+	if ( null === $wp_filesystem ) {
 		require_once ABSPATH . '/wp-admin/includes/file.php';
-		WP_Filesystem();
+		$wp_filesystem = new WP_Filesystem_Direct( null );
 	}
 
 	return $wp_filesystem;
