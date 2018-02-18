@@ -67,6 +67,7 @@ function dedicated_transients_uninstall() {
  */
 function dedicated_transients_check_object_cache() {
 	if ( wp_using_ext_object_cache() ) {
+		require_once ABSPATH . '/wp-admin/includes/plugin.php';
 		add_action( 'admin_notices', 'dedicated_transients_object_cache_error' );
 		deactivate_plugins( __FILE__, false, true );
 
