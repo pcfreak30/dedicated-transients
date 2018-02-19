@@ -96,7 +96,8 @@ function dedicated_transients_wp_filesystem() {
 	/** @var \WP_Filesystem_Direct $wp_filesystem */
 	static $wp_filesystem = null;
 	if ( null === $wp_filesystem ) {
-		require_once ABSPATH . '/wp-admin/includes/file.php';
+		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
+		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
 		$wp_filesystem = new WP_Filesystem_Direct( null );
 	}
 
