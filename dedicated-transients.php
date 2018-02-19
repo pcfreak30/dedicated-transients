@@ -4,7 +4,7 @@
  * Plugin Name: Dedicated Transients
  * Plugin URI: https://github.com/pcfreak30/dedicated-transients
  * Description: WordPress plugin to re-route transient storage to dedicated tables
- * Version: 0.1.4.1
+ * Version: 0.1.5
  * Author: Derrick Hammer
  * Author URI: https://www.derrickhammer.com
  * License:  GPL3

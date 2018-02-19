@@ -26,6 +26,10 @@ This section describes how to install the plugin and get it working.
 
 == Changelog ==
 
+### 0.1.5 ###
+
+* Bug: Fix requires used in dedicated_transients_wp_filesystem
+
 ### 0.1.4.1 ###
 
 * Bug: Fix wrong language
