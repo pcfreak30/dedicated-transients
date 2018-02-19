@@ -26,6 +26,10 @@ This section describes how to install the plugin and get it working.
 
 == Changelog ==
 
+### 0.1.4 ###
+
+* Bug: Fix use of $this in dedicated_transients_object_cache_error
+
 ### 0.1.3 ###
 
 * Bug: Use WP_Filesystem_Direct and dont use global version to prevent edge cases
