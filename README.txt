@@ -26,6 +26,10 @@ This section describes how to install the plugin and get it working.
 
 == Changelog ==
 
+### 0.1.4.1 ###
+
+* Bug: Fix wrong language
+
 ### 0.1.4 ###
 
 * Bug: Fix use of $this in dedicated_transients_object_cache_error
