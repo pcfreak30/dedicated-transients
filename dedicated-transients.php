@@ -85,7 +85,7 @@ function dedicated_transients_object_cache_error() {
 	$info = get_plugin_data( __FILE__ );
 	_e( sprintf( '
 	<div class="error notice">
-		<p>Opps! %s can not be activate when Object Cache is in use! Object Cache is also considered superior than this plugin.</p>
+		<p>Opps! %s can not be active when Object Cache is in use! Object Cache is also considered superior than this plugin.</p>
 	</div>', $info['Name'] ) );
 }
 
