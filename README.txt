@@ -26,6 +26,12 @@ This section describes how to install the plugin and get it working.
 
 == Changelog ==
 
+### 0.1.6 ###
+
+* Bug: Only setup MU tables if we are running network wide
+* Enhancement: Purge options transients on activation
+* Feature: Add ability to purge transients from the admin bar for both the current site and network wide if on multisite, else just the current site. Use filter `dedicated_transients_purge_capability` to change the default capability from `administrator`
+
 ### 0.1.5 ###
 
 * Bug: Fix requires used in dedicated_transients_wp_filesystem
