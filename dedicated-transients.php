@@ -154,7 +154,7 @@ function dedicated_transients_install_tables_single_site() {
 }
 
 /**
- * @param $blog_id
+ * @param i $blog_id
  */
 function dedicated_transients_install_tables_new_blog( $blog_id ) {
 	switch_to_blog( $blog_id );
@@ -163,8 +163,8 @@ function dedicated_transients_install_tables_new_blog( $blog_id ) {
 }
 
 /**
- * @param $tables
- * @param $blog_id
+ * @param array $tables
+ * @param int   $blog_id
  *
  * @return array
  */
@@ -174,6 +174,89 @@ function dedicated_transients_mu_table( $tables, $blog_id ) {
 
 	return $tables;
 }
+
+/**
+ * @param \WP_Admin_Bar $admin_bar
+ */
+function dedicated_transients_admin_bar( $admin_bar ) {
+	if ( is_multisite() ) {
+		$admin_bar->add_menu( array(
+			'id'    => 'dedicated-transients-menu',
+			'title' => __( 'Dedicated Transients', 'dedicated-transients' ),
+			'href'  => '#',
+		) );
+		$admin_bar->add_menu( array(
+			'parent' => 'dedicated-transients-menu',
+			'id'     => 'dedicated-transients-purge-mu',
+			'title'  => __( 'Purge Network Wide', 'dedicated-transients' ),
+			'href'   => wp_nonce_url( admin_url( 'admin-post.php?action=purge_dedicated_transients_multisite' ), 'purge_dedicated_transients_multisite' ),
+		) );
+		$admin_bar->add_menu( array(
+			'parent' => 'dedicated-transients-menu',
+			'id'     => 'dedicated-transients-purge',
+			'title'  => sprintf( __( 'Purge site "%s" only', 'dedicated-transients' ), get_bloginfo( 'name' ) ),
+			'href'   => wp_nonce_url( admin_url( 'admin-post.php?action=purge_dedicated_transients' ), 'purge_dedicated_transients' ),
+		) );
+
+		return;
+	}
+	$admin_bar->add_menu( array(
+		'id'    => 'dedicated-transients-purge',
+		'title' => __( 'Purge Dedicated Transients', 'dedicated-transients' ),
+		'href'  => wp_nonce_url( admin_url( 'admin-post.php?action=purge_dedicated_transients' ), 'purge_dedicated_transients' ),
+	) );
+}
+
+/**
+ *
+ */
+function dedicated_transients_admin_purge() {
+	if ( check_admin_referer( 'purge_dedicated_transients' ) ) {
+		dedicated_transients_purge();
+		wp_redirect( wp_get_referer() );
+	}
+}
+
+/**
+ *
+ */
+function dedicated_transients_admin_purge_multisite() {
+	if ( check_admin_referer( 'purge_dedicated_transients_multisite' ) ) {
+		$sites = get_sites( array( 'fields' => 'ids' ) );
+		if ( 1 < count( $sites ) ) {
+			dedicated_transients_purge_multisite();
+		}
+
+		foreach ( $sites as $blog_id ) {
+			switch_to_blog( $blog_id );
+			dedicated_transients_purge();
+			restore_current_blog();
+		}
+		wp_redirect( wp_get_referer() );
+	}
+}
+
+/**
+ *
+ */
+function dedicated_transients_purge() {
+	/** @var \wpdb $wpdb */
+	global $wpdb;
+
+	$wpdb->query( "TRUNCATE TABLE {$wpdb->get_blog_prefix()}" . DEDICATED_TRANSIENTS_TABLE );
+}
+
+function dedicated_transients_purge_multisite() {
+	/** @var \wpdb $wpdb */
+	global $wpdb;
+
+	$wpdb->query( "TRUNCATE TABLE {$wpdb->base_prefix}" . DEDICATED_TRANSIENTS_WPMU_TABLE );
+}
+
+add_action( 'admin_bar_menu', 'dedicated_transients_admin_bar', 100 );
+add_action( 'admin_post_purge_dedicated_transients', 'dedicated_transients_admin_purge' );
+add_action( 'admin_post_purge_dedicated_transients_multisite', 'dedicated_transients_admin_purge_multisite' );
+
 
 if ( is_multisite() ) {
 	add_action( 'wpmu_new_blog', 'dedicated_transients_install_tables_new_blog' );
