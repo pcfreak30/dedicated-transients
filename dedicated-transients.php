@@ -22,8 +22,10 @@ dedicated_transients_check_object_cache();
 
 /**
  * Activate only if object cache is not active
+ *
+ * @param bool $network_wide
  */
-function dedicated_transients_activate() {
+function dedicated_transients_activate( $network_wide ) {
 	if ( dedicated_transients_check_object_cache() ) {
 		return;
 	}
@@ -36,7 +38,25 @@ function dedicated_transients_activate() {
 	if ( ! ( $filesystem->is_file( $target ) && md5_file( $source ) === md5_file( $target ) ) ) {
 		$filesystem->copy( $source, $target, true );
 	}
-	dedicated_transients_install_tables();
+	dedicated_transients_install_tables( $network_wide );
+	dedicated_transients_install_purge( $network_wide );
+}
+
+/**
+ *
+ */
+function dedicated_transients_install_purge( $network_wide ) {
+	dedicated_transients_delete_expired_options_transients();
+	if ( is_multisite() && $network_wide ) {
+		$sites = get_sites( array( 'fields' => 'ids' ) );
+		if ( 1 < count( $sites ) ) {
+			foreach ( $sites as $blog_id ) {
+				switch_to_blog( $blog_id );
+				dedicated_transients_delete_expired_options_transients();
+				restore_current_blog();
+			}
+		}
+	}
 }
 
 /**
@@ -107,17 +127,17 @@ function dedicated_transients_wp_filesystem() {
 /**
  *
  */
-function dedicated_transients_install_tables() {
+function dedicated_transients_install_tables( $network_wide ) {
 	/*
 	 * Copied schema from ./wp-admin/includes/schema.php
 	 */
 	global $wpdb;
 	$charset_collate = $wpdb->get_charset_collate();
 	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-	if ( ! is_multisite() ) {
+	if ( ! is_multisite() || ! $network_wide ) {
 		dedicated_transients_install_tables_single_site();
 	}
-	if ( is_multisite() ) {
+	if ( is_multisite() && $network_wide ) {
 		$max_index_length = 191;
 		dbDelta( "CREATE TABLE {$wpdb->base_prefix}" . DEDICATED_TRANSIENTS_WPMU_TABLE . " (
   meta_id bigint(20) NOT NULL auto_increment,
@@ -129,7 +149,8 @@ function dedicated_transients_install_tables() {
   KEY site_id (site_id)
 ) $charset_collate;" );
 
-		foreach ( get_sites( array( 'fields' => 'ids' ) ) as $blog_id ) {
+		$sites = get_sites( array( 'fields' => 'ids' ) );
+		foreach ( $sites as $blog_id ) {
 			switch_to_blog( $blog_id );
 			dedicated_transients_install_tables_single_site();
 			restore_current_blog();
@@ -254,6 +275,42 @@ function dedicated_transients_purge_multisite() {
 	global $wpdb;
 
 	$wpdb->query( "TRUNCATE TABLE {$wpdb->base_prefix}" . DEDICATED_TRANSIENTS_WPMU_TABLE );
+}
+
+/**
+ * Copied from wp-includes/option.php without timestamp condition
+ *
+ */
+function dedicated_transients_delete_expired_options_transients() {
+	global $wpdb;
+
+	$wpdb->query( $wpdb->prepare(
+		"DELETE a, b FROM {$wpdb->options} a, {$wpdb->options} b
+			WHERE a.option_name LIKE %s
+			AND a.option_name NOT LIKE %s
+			AND b.option_name = CONCAT( '_transient_timeout_', SUBSTRING( a.option_name, 12 ) )",
+		$wpdb->esc_like( '_transient_' ) . '%',
+		$wpdb->esc_like( '_transient_timeout_' ) . '%'
+	) );
+	$wpdb->query( $wpdb->prepare(
+		"DELETE a, b FROM {$wpdb->options} a, {$wpdb->options} b
+				WHERE a.option_name LIKE %s
+				AND a.option_name NOT LIKE %s
+				AND b.option_name = CONCAT( '_site_transient_timeout_', SUBSTRING( a.option_name, 17 ) )",
+		$wpdb->esc_like( '_site_transient_' ) . '%',
+		$wpdb->esc_like( '_site_transient_timeout_' ) . '%'
+	) );
+	if ( is_multisite() && is_main_site() && is_main_network() ) {
+		// Multisite stores site transients in the sitemeta table.
+		$wpdb->query( $wpdb->prepare(
+			"DELETE a, b FROM {$wpdb->sitemeta} a, {$wpdb->sitemeta} b
+				WHERE a.meta_key LIKE %s
+				AND a.meta_key NOT LIKE %s
+				AND b.meta_key = CONCAT( '_site_transient_timeout_', SUBSTRING( a.meta_key, 17 ) )",
+			$wpdb->esc_like( '_site_transient_' ) . '%',
+			$wpdb->esc_like( '_site_transient_timeout_' ) . '%'
+		) );
+	}
 }
 
 add_action( 'admin_bar_menu', 'dedicated_transients_admin_bar', 100 );
