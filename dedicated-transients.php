@@ -179,6 +179,9 @@ function dedicated_transients_mu_table( $tables, $blog_id ) {
  * @param \WP_Admin_Bar $admin_bar
  */
 function dedicated_transients_admin_bar( $admin_bar ) {
+	if ( ! current_user_can( apply_filters( 'dedicated_transients_purge_capability', 'administrator' ) ) ) {
+		return;
+	}
 	if ( is_multisite() ) {
 		$admin_bar->add_menu( array(
 			'id'    => 'dedicated-transients-menu',
