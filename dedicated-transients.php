@@ -283,32 +283,17 @@ function dedicated_transients_purge_multisite() {
  */
 function dedicated_transients_delete_expired_options_transients() {
 	global $wpdb;
-
 	$wpdb->query( $wpdb->prepare(
-		"DELETE a, b FROM {$wpdb->options} a, {$wpdb->options} b
-			WHERE a.option_name LIKE %s
-			AND a.option_name NOT LIKE %s
-			AND b.option_name = CONCAT( '_transient_timeout_', SUBSTRING( a.option_name, 12 ) )",
+		"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s",
 		$wpdb->esc_like( '_transient_' ) . '%',
-		$wpdb->esc_like( '_transient_timeout_' ) . '%'
+		$wpdb->esc_like( '_site_transient_' ) . '%'
 	) );
-	$wpdb->query( $wpdb->prepare(
-		"DELETE a, b FROM {$wpdb->options} a, {$wpdb->options} b
-				WHERE a.option_name LIKE %s
-				AND a.option_name NOT LIKE %s
-				AND b.option_name = CONCAT( '_site_transient_timeout_', SUBSTRING( a.option_name, 17 ) )",
-		$wpdb->esc_like( '_site_transient_' ) . '%',
-		$wpdb->esc_like( '_site_transient_timeout_' ) . '%'
-	) );
+
 	if ( is_multisite() && is_main_site() && is_main_network() ) {
 		// Multisite stores site transients in the sitemeta table.
 		$wpdb->query( $wpdb->prepare(
-			"DELETE a, b FROM {$wpdb->sitemeta} a, {$wpdb->sitemeta} b
-				WHERE a.meta_key LIKE %s
-				AND a.meta_key NOT LIKE %s
-				AND b.meta_key = CONCAT( '_site_transient_timeout_', SUBSTRING( a.meta_key, 17 ) )",
-			$wpdb->esc_like( '_site_transient_' ) . '%',
-			$wpdb->esc_like( '_site_transient_timeout_' ) . '%'
+			"DELETE FROM {$wpdb->sitemeta} WHERE option_name LIKE %s",
+			$wpdb->esc_like( '_site_transient_' ) . '%'
 		) );
 	}
 }
