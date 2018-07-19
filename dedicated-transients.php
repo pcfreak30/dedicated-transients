@@ -292,7 +292,7 @@ function dedicated_transients_delete_expired_options_transients() {
 	if ( is_multisite() && is_main_site() && is_main_network() ) {
 		// Multisite stores site transients in the sitemeta table.
 		$wpdb->query( $wpdb->prepare(
-			"DELETE FROM {$wpdb->sitemeta} WHERE option_name LIKE %s",
+			"DELETE FROM {$wpdb->sitemeta} WHERE meta_key LIKE %s",
 			$wpdb->esc_like( '_site_transient_' ) . '%'
 		) );
 	}
