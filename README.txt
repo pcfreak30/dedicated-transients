@@ -26,6 +26,10 @@ This section describes how to install the plugin and get it working.
 
 == Changelog ==
 
+### 0.1.8 ###
+
+* Bug: Delete transient function uses option_name not meta_key for sitemeta table
+
 ### 0.1.7 ###
 
 * Bug: Simplify queries in dedicated_transients_delete_expired_options_transients to handle transients without a timeout
