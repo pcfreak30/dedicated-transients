@@ -26,6 +26,10 @@ This section describes how to install the plugin and get it working.
 
 == Changelog ==
 
+### 0.1.9 ###
+
+* Bug: Fix query syntax in dedicated_transients_uninstall
+
 ### 0.1.8 ###
 
 * Bug: Delete transient function uses option_name not meta_key for sitemeta table
