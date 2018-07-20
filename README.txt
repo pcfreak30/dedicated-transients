@@ -26,6 +26,10 @@ This section describes how to install the plugin and get it working.
 
 == Changelog ==
 
+### 0.1.9.1 ###
+
+* Bug: Fix sql errors added in 1.0.9
+
 ### 0.1.9 ###
 
 * Bug: Fix query syntax in dedicated_transients_uninstall
