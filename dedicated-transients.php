@@ -76,9 +76,9 @@ function dedicated_transients_deactivate() {
  */
 function dedicated_transients_uninstall() {
 	global $wpdb;
-	$wpdb->query( "DROP TABLE {$wpdb->base_prefix}" . DEDICATED_TRANSIENTS_TABLE . " IF EXISTS" );
+	$wpdb->query( "DROP TABLE  IF EXISTS {$wpdb->base_prefix}" . DEDICATED_TRANSIENTS_TABLE );
 	if ( is_multisite() ) {
-		$wpdb->query( "DROP TABLE {$wpdb->base_prefix}" . DEDICATED_TRANSIENTS_WPMU_TABLE . " IF EXISTS" );
+		$wpdb->query( "DROP TABLE   IF EXISTS{$wpdb->base_prefix}" . DEDICATED_TRANSIENTS_WPMU_TABLE );
 	}
 }
 
