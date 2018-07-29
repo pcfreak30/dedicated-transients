@@ -1,3 +1,4 @@
+
 === Plugin Name ===
 Contributors: pcfreak30
 Donate link: https://www.paypal.me/pcfreak30
@@ -25,6 +26,10 @@ This section describes how to install the plugin and get it working.
 3. Nothing else to do. Check PHPMyAdmin or similar if you are curious!
 
 == Changelog ==
+
+### 0.1.10 ###
+
+* Bug: Remove extra underscore for site transients in mu-plugin. **Should deactivate and reactivate plugin to force a transient purge in sitemeta to correct this bug side effects***
 
 ### 0.1.9.1 ###
 
