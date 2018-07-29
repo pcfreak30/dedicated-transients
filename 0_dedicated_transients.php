@@ -36,7 +36,7 @@ function dedicated_transients_process_query( $query ) {
 	if ( is_multisite() && false !== strpos( $query, $wpdb->sitemeta ) ) {
 		foreach (
 			array(
-				'_site__transient_',
+				'_site_transient_',
 				'\_site\_transient\_',
 				'_site_transient_timeout',
 				'\_site\_transient\_timeout',
