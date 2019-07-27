@@ -15,7 +15,7 @@ WordPress plugin to re-route transient storage to dedicated tables.
 
 This plugin will re-route all transient activity to a dedicated table each for both single and multisite. You can not use this with object cache! This plugin is mainly useful if you can not make use of object cache for any reason to help your site performance.
 
-If you need dedicated/professional assistance with this plugin or just want an expert to get your site to run the fastest it can be, you may hire me at [Codeable](https://codeable.io/developers/derrick-hammer/?ref=rvtGZ)
+If you are looking for a professional team to get your WordPress site to run faster, check us out for our speed optimization services at [Rank Grow Digital](https://rankgrowdigital.com/)
 
 == Installation ==
 
